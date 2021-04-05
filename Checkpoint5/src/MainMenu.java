@@ -2,7 +2,11 @@ import java.util.Scanner;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 public class MainMenu {
 	
@@ -40,13 +44,47 @@ public class MainMenu {
         }
         return conn;
     }
+    
+    /**
+     * Queries the database and prints the results.
+     * 
+     * @param conn a connection object
+     * @param args a list of query add its corresponding parameters
+     */
+    public static void selectQuery(Connection conn, String... args){
+        try {
+        	PreparedStatement ps = conn.prepareStatement(args[0]);
+        	for(int i = 1; i < args.length; i++) {
+        		ps.setString(i, args[i]);
+        	}
+        	ResultSet rs = ps.executeQuery(args[0]);
+        	ResultSetMetaData rsmd = rs.getMetaData();
+        	int columnCount = rsmd.getColumnCount();
+        	for (int i = 1; i <= columnCount; i++) {
+        		String value = rsmd.getColumnName(i);
+        		System.out.print(value);
+        		if (i < columnCount) System.out.print(",  ");
+        	}
+			System.out.print("\n");
+        	while (rs.next()) {
+        		for (int i = 1; i <= columnCount; i++) {
+        			String columnValue = rs.getString(i);
+            		System.out.print(columnValue);
+            		if (i < columnCount) System.out.print(",  ");
+        		}
+    			System.out.print("\n");
+        	}
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
 	
     /**
      * Presents the user with a list of options and calls the specified method.
      * 
      * @param in the scanner object
      */
-	private static void presentOptions(Scanner in) {
+	private static void presentOptions(Scanner in, Connection conn) {
 		printOptions();
 		int selection = in.nextInt();
 		switch(selection) {
@@ -55,7 +93,9 @@ public class MainMenu {
 				System.exit(0);
 				break;
 			case 1:
-				//todo search
+				System.out.print("Please enter an artists stage name: ");
+				String stageName = in.nextLine();
+				selectQuery(conn, Queries.artistSearch, stageName);
 				break;
 			case 2:
 				//todo add records
@@ -87,6 +127,6 @@ public class MainMenu {
 		Scanner in = new Scanner(System.in);
 		
 		while(true)
-			presentOptions(in);
+			presentOptions(in, conn);
 	}
 }
