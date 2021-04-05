@@ -6,7 +6,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 public class MainMenu {
 	
@@ -49,7 +48,7 @@ public class MainMenu {
      * Queries the database and prints the results.
      * 
      * @param conn a connection object
-     * @param args a list of query add its corresponding parameters
+     * @param args a list of a query and its corresponding parameters
      */
     public static void selectQuery(Connection conn, String... args){
         try {
@@ -57,7 +56,7 @@ public class MainMenu {
         	for(int i = 1; i < args.length; i++) {
         		ps.setString(i, args[i]);
         	}
-        	ResultSet rs = ps.executeQuery(args[0]);
+        	ResultSet rs = ps.executeQuery();
         	ResultSetMetaData rsmd = rs.getMetaData();
         	int columnCount = rsmd.getColumnCount();
         	for (int i = 1; i <= columnCount; i++) {
@@ -78,6 +77,24 @@ public class MainMenu {
             System.out.println(e.getMessage());
         }
     }
+    
+    /**
+     * Inserts the tuple into the specified table
+     * 
+     * @param conn a connection object
+     * @param args a list of a query and its corresponding parameters
+     */
+    public static void insert(Connection conn, String... args) {
+    	try {
+        	PreparedStatement ps = conn.prepareStatement(args[0]);
+        	for(int i = 1; i < args.length; i++) {
+        		ps.setString(i, args[i]);
+        	}
+        	ps.executeUpdate();
+    	} catch (SQLException e) {
+    		System.out.println(e.getMessage());
+    	}
+    }
 	
     /**
      * Presents the user with a list of options and calls the specified method.
@@ -86,28 +103,53 @@ public class MainMenu {
      */
 	private static void presentOptions(Scanner in, Connection conn) {
 		printOptions();
-		int selection = in.nextInt();
+		// Verifies that the user entered a proper selection
+		int selection = -1;
+		while(selection < 0){
+			try {
+				System.out.print("\n\nPlease select an option (integers only): ");
+				selection = Integer.parseInt(in.nextLine());
+			} catch(NumberFormatException e) {
+				System.out.println("Please enter an integer.");
+			}
+		}
+		// Calls the approriate query
 		switch(selection) {
 			case 0:
 				System.out.println("\nGoodbye!");
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					System.out.println("Failed to close the database.");
+				}
 				System.exit(0);
 				break;
 			case 1:
 				System.out.print("Please enter an artists stage name: ");
-				String stageName = in.nextLine();
+				String stageName = in.next();
 				selectQuery(conn, Queries.artistSearch, stageName);
 				break;
 			case 2:
-				//todo add records
+				System.out.print("Artist first name: ");
+				String fName = in.nextLine();
+				System.out.print("\nLast name: ");
+				String lName = in.nextLine();
+				System.out.print("\nDate of birth: ");
+				String bday = in.nextLine();
+				System.out.print("\nGender: ");
+				String gender = in.nextLine();
+				System.out.print("\nStage name: ");
+				String sName = in.nextLine();
+				insert(conn, Queries.artistAdd, fName, lName, bday, gender, sName);
 				break;
 			case 3:
-				//todo order items
+				//TODO order items
 				break;
 			case 4:
-				//todo edit records
+				//TODO edit records
 				break;
 			case 5:
-				//todo show reports
+				//TODO show reports
 				break;
 			default:
 				System.out.println("\nThe option you selected does not exist. Please try again.\n");
@@ -118,7 +160,6 @@ public class MainMenu {
 	private static void printOptions() {
 		System.out.println("Welcome! Database options listed below:");
 		System.out.println("\n(0) Exit\n(1) Search\n(2) Add new records\n(3) Order items\n(4) Edit records\n(5) Reports");
-		System.out.print("\n\nPlease select an option (integers only): ");
 	}
 
 	public static void main(String[] args) {
