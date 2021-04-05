@@ -115,6 +115,7 @@ public class MainMenu {
 		}
 		// Calls the approriate query
 		switch(selection) {
+			// Exits the program
 			case 0:
 				System.out.println("\nGoodbye!");
 				try {
@@ -124,11 +125,13 @@ public class MainMenu {
 				}
 				System.exit(0);
 				break;
+			// Searchs for artist
 			case 1:
 				System.out.print("Please enter an artists stage name: ");
 				String stageName = in.next();
 				query(conn, Queries.artistSearch, stageName);
 				break;
+			// Adds artist
 			case 2:
 				System.out.print("Artist first name: ");
 				String fName = in.nextLine();
@@ -141,23 +144,30 @@ public class MainMenu {
 				System.out.print("\nStage name: ");
 				String sName = in.nextLine();
 				DML(conn, Queries.artistAdd, fName, lName, bday, gender, sName);
+				System.out.println("Successfully added a new artist!");
 				break;
+			// Orders a movie or transfers a received order to current inventory
 			case 3:
 				System.out.print("Would you like to order a movie (a)? or process received order (b)?: ");
 				String choice = in.nextLine();
 				if(choice.equals("a")) {
 					//TODO add parameters for order
 					DML(conn, Queries.orderMovie);
+					System.out.println("Successfully ordered a movie!");
 				}else if(choice.equals("b")) {
 					//TODO move from ordered inventory to current inventory
+					System.out.println("Successfully added order to current inventory!");
 				}
 				break;
+			// Edits an artist
 			case 4:
 				System.out.print("Artist stage name: ");
 				String name = in.nextLine();
 				//TODO add parameters for editting
 				DML(conn, Queries.artistEdit, name);
+				System.out.println("Successfully edited an artist!");
 				break;
+			// Reports
 			case 5:
 				//TODO show reports
 				System.out.print("Select a report:\nTracks by ARTIST before YEAR (a)\nNumber of albums check out by PATRON (b)\nMost popular actor (c)\nMost listened to artist (d)\nPatron with the most movies checked out (e)\nEnter option: ");
