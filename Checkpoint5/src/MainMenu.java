@@ -165,7 +165,8 @@ public class MainMenu {
 					String dCopies = in.nextLine();
 					System.out.print("Cost: ");
 					String cost = in.nextLine();
-					DML(conn, Queries.mediaAdd);
+					DML(conn, Queries.orderInventory, pCopies, dCopies, java.time.LocalDate.now().toString(), cost);
+					DML(conn, Queries.mediaAdd, id, title, length, year, genre);
 					System.out.println("Successfully ordered a movie!");
 				}else if(choice.equals("b")) {
 					//TODO move from ordered inventory to current inventory
