@@ -50,7 +50,7 @@ public class MainMenu {
      * @param conn a connection object
      * @param args a list of a query and its corresponding parameters
      */
-    public static void selectQuery(Connection conn, String... args){
+    public static void query(Connection conn, String... args){
         try {
         	PreparedStatement ps = conn.prepareStatement(args[0]);
         	for(int i = 1; i < args.length; i++) {
@@ -84,7 +84,7 @@ public class MainMenu {
      * @param conn a connection object
      * @param args a list of a query and its corresponding parameters
      */
-    public static void insert(Connection conn, String... args) {
+    public static void DML(Connection conn, String... args) {
     	try {
         	PreparedStatement ps = conn.prepareStatement(args[0]);
         	for(int i = 1; i < args.length; i++) {
@@ -127,7 +127,7 @@ public class MainMenu {
 			case 1:
 				System.out.print("Please enter an artists stage name: ");
 				String stageName = in.next();
-				selectQuery(conn, Queries.artistSearch, stageName);
+				query(conn, Queries.artistSearch, stageName);
 				break;
 			case 2:
 				System.out.print("Artist first name: ");
@@ -140,16 +140,56 @@ public class MainMenu {
 				String gender = in.nextLine();
 				System.out.print("\nStage name: ");
 				String sName = in.nextLine();
-				insert(conn, Queries.artistAdd, fName, lName, bday, gender, sName);
+				DML(conn, Queries.artistAdd, fName, lName, bday, gender, sName);
 				break;
 			case 3:
-				//TODO order items
+				System.out.print("Would you like to order a movie (a)? or process received order (b)?: ");
+				String choice = in.nextLine();
+				if(choice.equals("a")) {
+					//TODO add parameters for order
+					DML(conn, Queries.orderMovie);
+				}else if(choice.equals("b")) {
+					//TODO move from ordered inventory to current inventory
+				}
 				break;
 			case 4:
-				//TODO edit records
+				System.out.print("Artist stage name: ");
+				String name = in.nextLine();
+				//TODO add parameters for editting
+				DML(conn, Queries.artistEdit, name);
 				break;
 			case 5:
 				//TODO show reports
+				System.out.print("Select a report:\nTracks by ARTIST before YEAR (a)\nNumber of albums check out by PATRON (b)\nMost popular actor (c)\nMost listened to artist (d)\nPatron with the most movies checked out (e)\nEnter option: ");
+				String option = in.nextLine();
+				switch(option){
+					case "a":
+						System.out.print("Enter artist stage name: ");
+						String artist = in.nextLine();
+						System.out.print("\nEnter a year: ");
+						String year = in.nextLine();
+						query(conn, Queries.tracksBeforeYear, artist, year);
+						break;
+					case "b":
+						//TODO finish this query
+						query(conn, Queries.albumsPatron);
+						break;
+					case "c":
+						//TODO finish this query
+						query(conn, Queries.popularActor);
+						break;
+					case "d":
+						//TODO finish this query
+						query(conn, Queries.popularArtist);
+						break;
+					case "e":
+						//TODO finish this query
+						query(conn, Queries.mostMoviePatron);
+						break;
+					default:
+						System.out.println("Not a valid option.");
+						break;
+				}
 				break;
 			default:
 				System.out.println("\nThe option you selected does not exist. Please try again.\n");
