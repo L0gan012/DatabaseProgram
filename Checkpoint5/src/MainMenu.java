@@ -151,8 +151,21 @@ public class MainMenu {
 				System.out.print("Would you like to order a movie (a)? or process received order (b)?: ");
 				String choice = in.nextLine();
 				if(choice.equals("a")) {
-					//TODO add parameters for order
-					DML(conn, Queries.orderMovie);
+					System.out.print("Title: ");
+					String title = in.nextLine();
+					System.out.print("Genre: ");
+					String genre = in.nextLine();
+					System.out.print("Length: ");
+					String length = in.nextLine();
+					System.out.print("Year: ");
+					String year = in.nextLine();
+					System.out.print("Number of physical copies: ");
+					String pCopies = in.nextLine();
+					System.out.print("Number of digital copies: ");
+					String dCopies = in.nextLine();
+					System.out.print("Cost: ");
+					String cost = in.nextLine();
+					DML(conn, Queries.mediaAdd);
 					System.out.println("Successfully ordered a movie!");
 				}else if(choice.equals("b")) {
 					//TODO move from ordered inventory to current inventory
