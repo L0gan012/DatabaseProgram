@@ -91,6 +91,7 @@ public class MainMenu {
         		ps.setString(i, args[i]);
         	}
         	ps.executeUpdate();
+        	System.out.println("Operation sucessful!");
     	} catch (SQLException e) {
     		System.out.println(e.getMessage());
     	}
@@ -128,8 +129,8 @@ public class MainMenu {
 			// Searchs for artist
 			case 1:
 				System.out.print("Please enter an artists stage name: ");
-				String stageName = in.next();
-				query(conn, Queries.artistSearch, stageName);
+				String stageName = in.nextLine();
+				query(conn, Queries.artistSearch, stageName + "%");
 				break;
 			// Adds artist
 			case 2:
@@ -144,7 +145,6 @@ public class MainMenu {
 				System.out.print("\nStage name: ");
 				String sName = in.nextLine();
 				DML(conn, Queries.artistAdd, fName, lName, bday, gender, sName);
-				System.out.println("Successfully added a new artist!");
 				break;
 			// Orders a movie or transfers a received order to current inventory
 			case 3:
@@ -159,6 +159,12 @@ public class MainMenu {
 					String length = in.nextLine();
 					System.out.print("Year: ");
 					String year = in.nextLine();
+					System.out.print("Rating: ");
+					String rating = in.nextLine();
+					System.out.print("Score: ");
+					String score = in.nextLine();
+					System.out.print("License: ");
+					String license = in.nextLine();
 					System.out.print("Number of physical copies: ");
 					String pCopies = in.nextLine();
 					System.out.print("Number of digital copies: ");
@@ -166,20 +172,29 @@ public class MainMenu {
 					System.out.print("Cost: ");
 					String cost = in.nextLine();
 					DML(conn, Queries.orderInventory, pCopies, dCopies, java.time.LocalDate.now().toString(), cost);
-					DML(conn, Queries.mediaAdd, id, title, length, year, genre);
-					System.out.println("Successfully ordered a movie!");
+					DML(conn, Queries.mediaAdd, genre, title, length, year);
+					DML(conn, Queries.movieAdd, rating, score, Boolean.toString(Integer.parseInt(dCopies) > 0), license, Boolean.toString(Integer.parseInt(pCopies) > 0));
 				}else if(choice.equals("b")) {
-					//TODO move from ordered inventory to current inventory
-					System.out.println("Successfully added order to current inventory!");
+					System.out.print("Inventory id: ");
+					String invID = in.nextLine();
+					DML(conn, Queries.activateItem, invID);
 				}
 				break;
 			// Edits an artist
 			case 4:
 				System.out.print("Artist stage name: ");
 				String name = in.nextLine();
-				//TODO add parameters for editting
-				DML(conn, Queries.artistEdit, name);
-				System.out.println("Successfully edited an artist!");
+				System.out.print("New first name: ");
+				String fn = in.nextLine();
+				System.out.print("New last name: ");
+				String ln = in.nextLine();
+				System.out.print("New birthdate: ");
+				String bd = in.nextLine();
+				System.out.print("New gender: ");
+				String gen = in.nextLine();
+				System.out.print("New stage name: ");
+				String sn = in.nextLine();
+				DML(conn, Queries.artistEdit, fn, ln, bd, gen, sn, name);
 				break;
 			// Reports
 			case 5:
@@ -192,22 +207,20 @@ public class MainMenu {
 						String artist = in.nextLine();
 						System.out.print("\nEnter a year: ");
 						String year = in.nextLine();
-						query(conn, Queries.tracksBeforeYear, artist, year);
+						query(conn, Queries.tracksBeforeYear, year, artist);
 						break;
 					case "b":
-						//TODO finish this query
-						query(conn, Queries.albumsPatron);
+						System.out.print("Enter the patron ID: ");
+						String pid = in.nextLine();
+						query(conn, Queries.albumsPatron, pid);
 						break;
 					case "c":
-						//TODO finish this query
 						query(conn, Queries.popularActor);
 						break;
 					case "d":
-						//TODO finish this query
 						query(conn, Queries.popularArtist);
 						break;
 					case "e":
-						//TODO finish this query
 						query(conn, Queries.mostMoviePatron);
 						break;
 					default:
